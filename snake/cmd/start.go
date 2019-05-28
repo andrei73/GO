@@ -19,6 +19,7 @@ import (
 	"github.com/andrei73/GO/snake/pkg/random"
 	"github.com/spf13/cobra"
 	"time"
+	"github.com/spf13/viper"
 )
 var file string
 // startCmd represents the start command
@@ -37,6 +38,10 @@ to quickly create a Cobra application.`,
 		n = 10
 		x = 2
 		file := cmd.Flag("file").Value.String()
+		viper.SetConfigFile(file)
+		if err := viper.ReadInConfig(); err == nil {
+			fmt.Println("Using config file:", viper.ConfigFileUsed())
+		}
 		for {
 			time.Sleep(time.Duration(x) * time.Second)
 			fmt.Println(random.Generate(n))
