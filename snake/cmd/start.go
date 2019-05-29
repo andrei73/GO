@@ -20,6 +20,8 @@ import (
 	"github.com/spf13/cobra"
 	"time"
 	"github.com/spf13/viper"
+	log "github.com/sirupsen/logrus"
+	"os"
 )
 var file string
 // startCmd represents the start command
@@ -33,19 +35,40 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("start called")
-		var n, x int
-		n = 10
-		x = 2
-		file := cmd.Flag("file").Value.String()
-		viper.SetConfigFile(file)
+		config_file := cmd.Flag("file").Value.String()
+		viper.SetConfigFile(config_file)
+		viper.SetConfigType("json")
 		if err := viper.ReadInConfig(); err == nil {
 			fmt.Println("Using config file:", viper.ConfigFileUsed())
 		}
+		x := viper.GetInt("run_interval")
+		target := viper.GetString("target_file")
+		file, err := os.Create(target)
+		if err != nil {
+        	log.Fatal("Cannot create file", err)
+    	}
+		defer file.Close()
+
+
+		log.SetLevel(log.InfoLevel)
+		log.SetOutput(file)
+		var n int = 10
+		
+		fmt.Println("Application started...")
+		log.Info("Something noteworthy happened!")
+		
+		fmt.Println(x)
+		fmt.Println(target)
+		
+    	
+		file.WriteString("halo\n")
+
+		
 		for {
 			time.Sleep(time.Duration(x) * time.Second)
-			fmt.Println(random.Generate(n))
-			fmt.Println(file)
+			fmt.Fprintln(file, random.Generate(n))
+			//fmt.Println(random.Generate(n))
+			//fmt.Println(file)
 		}
 
 	},

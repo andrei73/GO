@@ -1,0 +1,5 @@
+{
+	"run_interval": "5",
+	"log_level": "Error",
+	"target_file": "/home/andrei/GOPATH/target2.txt"
+}
